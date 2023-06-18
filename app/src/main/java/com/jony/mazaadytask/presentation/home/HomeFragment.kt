@@ -87,7 +87,7 @@ class HomeFragment : BaseFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val selectedSubcategory = s?.toString()
                 val optionId = getOptionIdBySubcategory(selectedSubcategory)
-                optionId?.let { viewModel.getOptionData(it) }
+                optionId?.let { viewModel.getPropertiesCatsData(it) }
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -108,7 +108,7 @@ class HomeFragment : BaseFragment() {
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(GetAllViewModel::class.java)
         viewModel.getAllCatsLiveData().observe(viewLifecycleOwner, getAllCatsObserver)
-        viewModel.getOptionLiveData().observe(viewLifecycleOwner, propertiesObserver)
+        viewModel.getPropertiesLiveData().observe(viewLifecycleOwner, propertiesObserver)
     }
 
     private fun initRV() {
@@ -133,8 +133,7 @@ class HomeFragment : BaseFragment() {
                         }
                     }
                 }
-                categoryAdapter =
-                    ArrayAdapter(requireContext(), R.layout.dropdown_item, categoryNames)
+                categoryAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, categoryNames)
                 binding?.main?.setAdapter(categoryAdapter)
                 val childrenAdapter =
                     ArrayAdapter(requireContext(), R.layout.dropdown_item, childrenNames)
@@ -149,12 +148,14 @@ class HomeFragment : BaseFragment() {
             }
         }
     }
-    private var propertiesObserver: Observer<Resource<GetOptionsChildResponse?>> = Observer {
+    private var propertiesObserver: Observer<Resource<PropertiesCatResponse?>> = Observer {
         when (it.status) {
             Resource.Status.LOADING -> {
             }
             Resource.Status.SUCCESS -> {
-                adapter.setData(it.data?.data as List<GetOptionsChildResponse.Data.Option>)
+                val properitesAdapter = PropertiesAdapter(requireContext())
+                binding?.propertiesRecyclerview?.setAdapter(properitesAdapter)
+                properitesAdapter.setData(it.data?.data as List<GetOptionsChildResponse.Data?>)
             }
             Resource.Status.API_ERROR -> {
                 handleError(it.error_msg.toString())

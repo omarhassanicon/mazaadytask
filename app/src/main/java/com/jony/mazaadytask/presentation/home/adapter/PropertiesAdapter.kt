@@ -14,11 +14,11 @@ import javax.inject.Inject
 class PropertiesAdapter @Inject constructor(@ApplicationContext val context: Context):
     RecyclerView.Adapter<PropertiesAdapter.ViewHolder>() {
     private lateinit var binding : DropdownItemBinding
-    private var channelsList:ArrayList<GetOptionsChildResponse.Data.Option> = ArrayList()
+    private var channelsList:ArrayList<GetOptionsChildResponse.Data> = ArrayList()
 
     inner class ViewHolder (binding: DropdownItemBinding)
         : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: GetOptionsChildResponse.Data.Option) {
+        fun bind(item: GetOptionsChildResponse.Data) {
             binding.apply {
                 text1.text = item.name
             }
@@ -39,10 +39,16 @@ class PropertiesAdapter @Inject constructor(@ApplicationContext val context: Con
         return channelsList.size
     }
 
-    fun setData(list: List<GetOptionsChildResponse.Data.Option>) {
-        if (this.channelsList.isNotEmpty())
-            this.channelsList.clear()
-        this.channelsList.addAll(list)
-        notifyDataSetChanged()
-    }
+//    fun setData(list: List<GetOptionsChildResponse.Data.Option>) {
+//        if (this.channelsList.isNotEmpty())
+//            this.channelsList.clear()
+//        this.channelsList.addAll(list)
+//        notifyDataSetChanged()
+//    }
+fun setData(list: List<GetOptionsChildResponse.Data?>) {
+    val optionsList = list.filterNotNull()
+    channelsList.clear()
+    channelsList.addAll(optionsList)
+    notifyDataSetChanged()
+}
 }
